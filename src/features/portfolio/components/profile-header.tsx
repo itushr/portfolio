@@ -21,11 +21,7 @@ export function ProfileHeader() {
           aria-hidden
         >
           <HandwrittenArrow className="-scale-y-100 -rotate-6" />
-          <span className="ml-3 -rotate-6">
-            follows your cursor
-            <span className="block" />
-            click for a sound
-          </span>
+          <span className="ml-3 -rotate-6">follows cursor</span>
         </HandwrittenNote>
 
         <figcaption className="pointer-events-none absolute right-2 bottom-2 text-sm/none tracking-wide text-[color-mix(in_oklab,var(--muted-foreground)_60%,var(--background))] tabular-nums select-none sm:right-4 sm:bottom-4">
