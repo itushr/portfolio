@@ -38,20 +38,13 @@ export function ContributionsClient({
       onValueChange={(val) => setPlatform(val as ContributionPlatform)}
       className="gap-0"
     >
-      <div className="flex items-center justify-between border-b border-line px-4 py-2">
-        <span className="font-mono text-xs font-medium tracking-wider text-muted-foreground uppercase">
-          Contributions
-        </span>
-
+      <div className="px-4 pt-4 pb-2">
         <TabsList className="h-7 p-0.5">
-          <TabsTrigger value="github" className="gap-1.5 px-2.5 py-0.5 text-xs">
+          <TabsTrigger value="github" className="gap-1.5 px-2.5 py-1 text-xs">
             <GitHubIcon className="size-3.5" />
             GitHub
           </TabsTrigger>
-          <TabsTrigger
-            value="leetcode"
-            className="gap-1.5 px-2.5 py-0.5 text-xs"
-          >
+          <TabsTrigger value="leetcode" className="gap-1.5 px-2.5 py-1 text-xs">
             <LeetCodeIcon className="size-3.5" />
             LeetCode
           </TabsTrigger>

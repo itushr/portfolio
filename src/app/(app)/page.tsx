@@ -75,7 +75,7 @@ export default function HomePage() {
           <Separator />
 
           <Projects />
-          <Separator />
+          {/* <Separator /> */}
 
           {/* <Recognition /> */}
           {/* <Separator /> */}
@@ -83,7 +83,7 @@ export default function HomePage() {
           <Suspense fallback={<InsightsSkeleton />}>
             <Insights />
           </Suspense>
-          <Separator />
+          {/* <Separator /> */}
 
           {/* <Sponsors /> */}
         </div>
