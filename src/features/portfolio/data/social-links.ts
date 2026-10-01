@@ -8,7 +8,7 @@ import type { SocialProfile } from "@/features/portfolio/types/social-links"
 export const SOCIAL = {
   x: {
     title: "X",
-    handle: "@404",
+    handle: "@NotFound",
     href: "https://x.com/404",
     sameAs: true,
   },
@@ -20,8 +20,8 @@ export const SOCIAL = {
   },
   linkedin: {
     title: "LinkedIn",
-    handle: "404",
-    href: "https://linkedin.com/in/404",
+    handle: "tusharramgirkar",
+    href: "https://www.linkedin.com/in/tusharramgirkar/",
     sameAs: true,
   },
   // devfordev: {
@@ -30,17 +30,17 @@ export const SOCIAL = {
   //   href: "https://devfordev.bytushar.in/iamtushar",
   //   sameAs: true,
   // },
-  discord: {
-    title: "Discord",
-    handle: "404",
-    href: "https://discord.com/users/111404",
-  },
-  youtube: {
-    title: "YouTube",
-    handle: "@404",
-    href: "https://www.youtube.com/@404",
-    sameAs: true,
-  },
+  // discord: {
+  //   title: "Discord",
+  //   handle: "404",
+  //   href: "https://discord.com/users/111404",
+  // },
+  // youtube: {
+  //   title: "YouTube",
+  //   handle: "@404",
+  //   href: "https://www.youtube.com/@404",
+  //   sameAs: true,
+  // },
 } satisfies Record<string, SocialProfile>
 
 export type SocialName = keyof typeof SOCIAL
