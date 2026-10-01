@@ -55,6 +55,8 @@ export const MOBILE_NAV: NavItem<Route>[] = [
 
 export const X_HANDLE = SOCIAL.x.handle
 export const GITHUB_USERNAME = SOCIAL.github.handle
+export const LEETCODE_USERNAME = USER.username || "itushr"
+export const LEETCODE_PROFILE_URL = `https://leetcode.com/u/${LEETCODE_USERNAME}`
 export const SOURCE_CODE_GITHUB_REPO = "ncdai/chanhdai.com"
 export const SOURCE_CODE_GITHUB_URL = "https://github.com/ncdai/chanhdai.com"
 

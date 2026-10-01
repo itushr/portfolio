@@ -5,6 +5,7 @@ import { formatNumber } from "@/utils/format"
 import { format, parseISO } from "date-fns"
 import { LoaderIcon } from "lucide-react"
 
+import { LEETCODE_PROFILE_URL } from "@/config/site"
 import {
   Tooltip,
   TooltipContent,
@@ -19,19 +20,20 @@ import {
   ContributionGraphLegend,
   ContributionGraphTotalCount,
 } from "@/registry/components/contribution-graph"
-import { SOCIAL } from "@/features/portfolio/data/social-links"
 
-export function GitHubContributionGraph({
+export function LeetCodeContributionGraph({
   contributions,
+  profileUrl = LEETCODE_PROFILE_URL,
 }: {
   contributions: Promise<Activity[]>
+  profileUrl?: string
 }) {
   const data = use(contributions)
 
   if (data.length === 0) {
     return (
       <div className="flex h-45 w-full items-center justify-center text-sm text-muted-foreground">
-        No GitHub activity found.
+        No LeetCode activity found.
       </div>
     )
   }
@@ -44,11 +46,11 @@ export function GitHubContributionGraph({
         blockSize={12}
         blockMargin={2}
         blockRadius={0}
-        aria-label="GitHub Contributions Graph"
+        aria-label="LeetCode Contributions Graph"
       >
         <ContributionGraphCalendar
           className="px-4 **:data-[slot=month-labels]:text-muted-foreground"
-          title="GitHub Contributions"
+          title="LeetCode Contributions"
           aria-hidden
         >
           {({ activity, dayIndex, weekIndex }) => (
@@ -66,7 +68,7 @@ export function GitHubContributionGraph({
               />
               <TooltipContent className="font-sans">
                 <p>
-                  {activity.count} contribution{activity.count > 1 ? "s" : null}{" "}
+                  {activity.count} submission{activity.count > 1 ? "s" : null}{" "}
                   on {format(parseISO(activity.date), "d MMM yyyy")}
                 </p>
               </TooltipContent>
@@ -81,17 +83,17 @@ export function GitHubContributionGraph({
                 <span className="mr-2 tracking-wide text-muted-foreground/80">
                   Fig. 2.
                 </span>
-                {formatNumber(totalCount)} contributions,{" "}
+                {formatNumber(totalCount)} submissions,{" "}
                 {format(parseISO(data[0].date), "d MMM yyyy")} –{" "}
                 {format(parseISO(data[data.length - 1].date), "d MMM yyyy")}.
                 Source:{" "}
                 <a
-                  href={SOCIAL.github.href}
+                  href={profileUrl}
                   className="link-underline"
                   target="_blank"
                   rel="noopener"
                 >
-                  GitHub
+                  LeetCode
                 </a>
                 .
               </figcaption>
@@ -105,7 +107,7 @@ export function GitHubContributionGraph({
   )
 }
 
-export function GitHubContributionFallback() {
+export function LeetCodeContributionFallback() {
   return (
     <div className="flex h-45 w-full items-center justify-center">
       <LoaderIcon className="animate-spin text-muted-foreground" />
