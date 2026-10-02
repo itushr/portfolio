@@ -9,10 +9,11 @@ export const USER: User = {
   pronouns: "he/him",
   bio: "Creating with code. Small details matter.",
   flipSentences: [
-    "I am addicted to coding.",
+    "Suffered enough from CORS errors.",
     "System first, Code later.",
     "Building with MERN stack.",
     "Powered by Linux.",
+    "404: Work-Life Balance Not Found.",
   ],
   address: "Pune, India",
   phoneNumberB64: "KzkxODMyOTQ5NzQ2MQ==", // E.164 format, base64 encoded (https://t.io.vn/base64-string-converter)
