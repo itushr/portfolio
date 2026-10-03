@@ -30,11 +30,16 @@ export const SOCIAL = {
   //   href: "https://devfordev.bytushar.in/iamtushar",
   //   sameAs: true,
   // },
-  // discord: {
-  //   title: "Discord",
-  //   handle: "404",
-  //   href: "https://discord.com/users/111404",
-  // },
+  discord: {
+    title: "Discord",
+    handle: "404",
+    href: "https://discord.com/users/111404",
+  },
+  leetcode: {
+    title: "LeetCode",
+    handle: "itushr",
+    href: "https://leetcode.com/u/itushr",
+  },
   // youtube: {
   //   title: "YouTube",
   //   handle: "@404",

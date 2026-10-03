@@ -1,6 +1,7 @@
 import {
   DiscordIcon,
   GitHubIcon,
+  LeetCodeIcon,
   LinkedInIcon,
   XIcon,
   YouTubeIcon,
@@ -18,5 +19,6 @@ export const SOCIAL_ICONS: Record<SocialName, React.JSX.Element> = {
   linkedin: <LinkedInIcon />,
   // dailydotdev: <DailyDotDevIcon />,
   discord: <DiscordIcon />,
-  youtube: <YouTubeIcon />,
+  // youtube: <YouTubeIcon />,
+  leetcode: <LeetCodeIcon />,
 }
