@@ -1,9 +1,9 @@
 import { USER } from "@/features/portfolio/data/user"
 
-import { ChanhDaiMarkIsometric } from "./chanhdai-mark-isometric"
+// import { ChanhDaiMarkIsometric } from "./chanhdai-mark-isometric"
 import { FlipSentences } from "./flip-sentences"
-import { HandwrittenArrow, HandwrittenNote } from "./handwritten-note"
-import { PronounceMyName } from "./pronounce-my-name"
+// import { HandwrittenArrow, HandwrittenNote } from "./handwritten-note"
+// import { PronounceMyName } from "./pronounce-my-name"
 import { TusharSignature } from "./tushar-signature"
 import { VerifiedIcon } from "./verified-icon"
 
@@ -64,11 +64,11 @@ export function ProfileHeader() {
 
             <VerifiedIcon className="size-4.5 select-none" aria-hidden />
 
-            {USER.namePronunciationUrl && (
+            {/* {USER.namePronunciationUrl && (
               <PronounceMyName
                 namePronunciationUrl={USER.namePronunciationUrl}
               />
-            )}
+            )} */}
           </div>
 
           <FlipSentences className="h-12.5 border-t border-line py-1 pl-4 sm:h-9">
