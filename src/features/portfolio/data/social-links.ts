@@ -8,39 +8,44 @@ import type { SocialProfile } from "@/features/portfolio/types/social-links"
 export const SOCIAL = {
   x: {
     title: "X",
-    handle: "@iamncdai",
-    href: "https://x.com/iamncdai",
+    handle: "@NotFound",
+    href: "https://x.com/404",
     sameAs: true,
   },
   github: {
     title: "GitHub",
-    handle: "ncdai",
-    href: "https://github.com/ncdai",
+    handle: "itushr",
+    href: "https://github.com/itushr",
     sameAs: true,
   },
   linkedin: {
     title: "LinkedIn",
-    handle: "ncdai",
-    href: "https://linkedin.com/in/ncdai",
+    handle: "tusharramgirkar",
+    href: "https://www.linkedin.com/in/tusharramgirkar/",
     sameAs: true,
   },
-  // dailydotdev: {
-  //   title: "daily.dev",
-  //   handle: "@ncdai",
-  //   href: "https://app.daily.dev/ncdai",
+  // devfordev: {
+  //   title: "devfordev",
+  //   handle: "@iamtushar",
+  //   href: "https://devfordev.bytushar.in/iamtushar",
   //   sameAs: true,
   // },
   discord: {
     title: "Discord",
-    handle: "ncdai",
-    href: "https://discord.com/users/1186630645443739651",
+    handle: "404",
+    href: "https://discord.com/users/111404",
   },
-  youtube: {
-    title: "YouTube",
-    handle: "@ncdai",
-    href: "https://www.youtube.com/@ncdai",
-    sameAs: true,
+  leetcode: {
+    title: "LeetCode",
+    handle: "itushr",
+    href: "https://leetcode.com/u/itushr",
   },
+  // youtube: {
+  //   title: "YouTube",
+  //   handle: "@404",
+  //   href: "https://www.youtube.com/@404",
+  //   sameAs: true,
+  // },
 } satisfies Record<string, SocialProfile>
 
 export type SocialName = keyof typeof SOCIAL

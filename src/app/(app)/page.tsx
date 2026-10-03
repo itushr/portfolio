@@ -7,11 +7,11 @@ import { JSON_LD_ID } from "@/config/json-ld"
 import { JsonLdScript } from "@/lib/json-ld"
 import { absoluteUrl, cn } from "@/lib/utils"
 import { FloatingCarbonAds } from "@/components/floating-carbon-ads"
-import { Blocks } from "@/features/portfolio/components/blocks"
-import { Blog } from "@/features/portfolio/components/blog"
-import { Components } from "@/features/portfolio/components/components"
+// import { Blocks } from "@/features/portfolio/components/blocks"
+// import { Blog } from "@/features/portfolio/components/blog"
+// import { Components } from "@/features/portfolio/components/components"
 import { Education } from "@/features/portfolio/components/education"
-import { Experiences } from "@/features/portfolio/components/experiences"
+// import { Experiences } from "@/features/portfolio/components/experiences"
 import { GitHubContributions } from "@/features/portfolio/components/github-contributions"
 import { Hello } from "@/features/portfolio/components/hello"
 import {
@@ -21,12 +21,12 @@ import {
 import { Overview } from "@/features/portfolio/components/overview"
 import { ProfileHeader } from "@/features/portfolio/components/profile-header"
 import { Projects } from "@/features/portfolio/components/projects"
-import { Recognition } from "@/features/portfolio/components/recognition"
+// import { Recognition } from "@/features/portfolio/components/recognition"
 import { SocialLinks } from "@/features/portfolio/components/social-links"
-import { Sponsors } from "@/features/portfolio/components/sponsors"
-import { SponsorsCarousel } from "@/features/portfolio/components/sponsors-carousel"
+// import { Sponsors } from "@/features/portfolio/components/sponsors"
+// import { SponsorsCarousel } from "@/features/portfolio/components/sponsors-carousel"
 import { TechStack } from "@/features/portfolio/components/tech-stack"
-import { Testimonials } from "@/features/portfolio/components/testimonials"
+// import { Testimonials } from "@/features/portfolio/components/testimonials"
 import { USER } from "@/features/portfolio/data/user"
 
 export const metadata: Metadata = {
@@ -52,40 +52,40 @@ export default function HomePage() {
           <Separator />
 
           <Hello />
-          <SponsorsCarousel />
-          <Testimonials />
+          {/* <SponsorsCarousel /> */}
+          {/* <Testimonials /> */}
           <Separator />
 
-          <Components />
-          <Separator />
+          {/* <Components /> */}
+          {/* <Separator /> */}
 
-          <Blocks />
-          <Separator />
+          {/* <Blocks /> */}
+          {/* <Separator /> */}
 
-          <Blog />
-          <Separator />
+          {/* <Blog /> */}
+          {/* <Separator /> */}
 
           <TechStack />
           <Separator />
 
-          <Experiences />
-          <Separator />
+          {/* <Experiences /> */}
+          {/* <Separator /> */}
 
           <Education />
           <Separator />
 
           <Projects />
-          <Separator />
+          {/* <Separator /> */}
 
-          <Recognition />
-          <Separator />
+          {/* <Recognition /> */}
+          {/* <Separator /> */}
 
           <Suspense fallback={<InsightsSkeleton />}>
             <Insights />
           </Suspense>
-          <Separator />
+          {/* <Separator /> */}
 
-          <Sponsors />
+          {/* <Sponsors /> */}
         </div>
       </div>
     </>
