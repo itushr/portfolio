@@ -34,9 +34,9 @@ export const USER: User = {
     //   experienceId: "nothing",
     // },
   ],
-  about: `- I’m Chánh Đại (call me Dai) — a Design Engineer with 5+ years of experience, known for pixel-perfect execution and an obsessive attention to detail.
-- Passionate about exploring new technologies and turning ideas into reality through polished, thoughtfully crafted projects.
-- Creator of [chanhdai.com](https://github.com/ncdai/chanhdai.com) (2.2k stars), [React Wheel Picker](https://react-wheel-picker.chanhdai.com) (50k+ weekly downloads, ▲ Vercel OSS Program), and [ZaDark](https://zadark.com) (80k+ downloads, 30k+ users) — peak metrics.
+  about: `- I’m Tushar, a Computer Science Engineering student and full-stack developer primarily focused on the MERN stack and applied AI.
+- I enjoy turning ideas into practical, polished products, from developer tools and communities to AI-powered applications. While MERN and applied AI are my main focus, I’m constantly experimenting with new technologies across machine learning, Web3, and whatever else looks interesting enough to build.
+- Currently, I’m focused on strengthening my fundamentals, shipping real projects, and becoming a better engineer by building things.
 `,
   avatar: "https://avatars.githubusercontent.com/u/172966899?v=4",
   avatarSketch: "https://avatars.githubusercontent.com/u/172966899?v=4",
