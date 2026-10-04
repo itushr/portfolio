@@ -1,24 +1,29 @@
 {
-  "name": "chanhdai.com",
+  "name": "iamtushar.in",
   "version": "0.1.0",
-  "description": "A pixel-perfect dev portfolio and shadcn registry.",
-  "homepage": "https://chanhdai.com",
+  "description": "Hey! I am Tushar Ragmirkar",
+  "homepage": "https://iamtushar.in",
   "license": "MIT",
   "author": {
-    "name": "Nguyen Chanh Dai",
-    "email": "dai@chanhdai.com",
-    "url": "https://github.com/ncdai"
+    "name": "Tushar Ragmirkar",
+    "email": "contact@iamtushar.in",
+    "url": "https://github.com/itushr"
   },
   "contributors": [
     {
       "name": "Nguyen Chanh Dai",
       "email": "dai@chanhdai.com",
       "url": "https://github.com/ncdai"
+    },
+    {
+      "name": "Tushar Ragmirkar",
+      "email": "contact@iamtushar.in",
+      "url": "https://github.com/itushr"
     }
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ncdai/chanhdai.com.git"
+    "url": "git+https://github.com/itushr/portfolio.git"
   },
   "scripts": {
     "dev": "next dev",
