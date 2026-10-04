@@ -15,6 +15,7 @@ import packageJson from "../../package.json"
 // Precomputed by `pnpm registry:build`, so the count costs no registry import.
 import registryStats from "../../registry-stats.json"
 import { ChanhDaiMark } from "./chanhdai-mark"
+import { FluidGradientText } from "./fluid-gradient-text"
 
 const INSPIRED_BY = [
   "Tailwind CSS",
@@ -257,7 +258,8 @@ export function SiteFooterCad() {
         </div>
       </div>
 
-      <SiteFooterInteractiveLogotype />
+      {/* <SiteFooterInteractiveLogotype /> */}
+      <FluidGradientText text="tushar" />
 
       <div className="h-(--fade-bottom-height)" />
       <div className="pb-[env(safe-area-inset-bottom,0)]" />
