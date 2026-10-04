@@ -15,24 +15,25 @@ import packageJson from "../../package.json"
 // Precomputed by `pnpm registry:build`, so the count costs no registry import.
 import registryStats from "../../registry-stats.json"
 import { ChanhDaiMark } from "./chanhdai-mark"
+import { FluidGradientText } from "./fluid-gradient-text"
 
 const INSPIRED_BY = [
-  "Tailwind CSS",
-  "shadcn/ui",
-  "Vercel",
-  "Evil Charts",
-  "Devouring Details",
-  "Skiper UI",
-  "Making Software",
-  "shadcncraft",
+  { name: "chanhdai.com", url: "https://chanhdai.com" },
+  { name: "tailwind css", url: "https://tailwindcss.com" },
+  { name: "shadcn/ui", url: "https://ui.shadcn.com" },
+  { name: "vercel", url: "https://vercel.com" },
+  { name: "evil charts", url: "https://evilcharts.com" },
+  { name: "devouring details", url: "https://devouringdetails.com" },
+  { name: "skiper ui", url: "https://skiper-ui.com" },
+  { name: "making software", url: "https://makingsoftware.com" },
 ]
 
 const OPENPANEL_URL =
-  "https://openpanel.dev?utm_source=chanhdai.com&utm_medium=referral&utm_campaign=footer"
+  "https://openpanel.dev?utm_source=iamtushar.in&utm_medium=referral&utm_campaign=footer"
 
 // Not derived from `SITE_INFO.url`: that follows `NEXT_PUBLIC_APP_URL` and
 // would read `ncdai.localhost` in dev.
-const SITE_TITLE = "chanhdai.com"
+const SITE_TITLE = packageJson.name
 
 const SITE_SUBTITLE = packageJson.description
 
@@ -84,7 +85,7 @@ export function SiteFooterCad() {
 
             <Field label="Deployed on">
               <span className="font-sans" aria-hidden>
-                ▲
+                ▲ Vercel
               </span>
               <span className="sr-only">Vercel</span>
             </Field>
@@ -169,8 +170,8 @@ export function SiteFooterCad() {
                 cells above, rather than dividing the padded width.
               */}
               <ol className="-mx-4 grid grid-cols-2 gap-x-px gap-y-0.5 font-sans md:grid-cols-4">
-                {INSPIRED_BY.map((name, index) => (
-                  <li className="flex gap-2 px-4" key={name}>
+                {INSPIRED_BY.map((item, index) => (
+                  <li className="flex gap-2 px-4" key={item.name}>
                     {/* Hidden: the list element already conveys the position. */}
                     <span
                       className="font-mono text-muted-foreground/80"
@@ -178,7 +179,14 @@ export function SiteFooterCad() {
                     >
                       {String(index + 1).padStart(2, "0")}
                     </span>
-                    {name}
+                    <a
+                      className="link-underline"
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      {item.name}
+                    </a>
                   </li>
                 ))}
               </ol>
@@ -257,7 +265,8 @@ export function SiteFooterCad() {
         </div>
       </div>
 
-      <SiteFooterInteractiveLogotype />
+      {/* <SiteFooterInteractiveLogotype /> */}
+      <FluidGradientText text="tushar" />
 
       <div className="h-(--fade-bottom-height)" />
       <div className="pb-[env(safe-area-inset-bottom,0)]" />

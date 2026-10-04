@@ -1,18 +1,217 @@
+"use client"
+
+import { useCallback, useEffect, useRef, type RefObject } from "react"
+import { useMotionValue, useSpring, type MotionValue } from "motion/react"
+
+const D =
+  "M211 110 92 563M22 328 403 262C330 506 370 717 577 261L521 567M867 199C337 534 1181 226 766 526M1166 20C1130.3333 180 879 655 1059 500 1537-146 1001 840 1500 398 1600 303 1626 278 1738 248 1470 281 1353 791 1749 261 1623 707 1957 393 1961 307 1953.6667 382.6667 1956 450 1939 534 1942 444 1963 232 2185 187"
+
+// one <path> per stroke, so each stroke can be revealed on its own
+const STROKES = D.split(/(?=M)/)
+
+const VIEW_W = 2205
+const FULL = VIEW_W + 60 // cursor x that means "everything is drawn"
+
+type Table = { xs: number[]; ts: number[] }
+type StrokeInfo = { el: SVGPathElement; table: Table; total: number }
+type Registry = RefObject<(StrokeInfo | undefined)[]>
+
+/**
+ * Samples a stroke and builds a lookup: cursor x -> fraction of the stroke drawn.
+ * Uses the running max of x so that strokes which curl back (loops, the "s")
+ * don't un-draw themselves while the cursor keeps moving right.
+ */
+function buildTable(el: SVGPathElement): Table {
+  const N = 300
+  const total = el.getTotalLength()
+  const px = Array.from(
+    { length: N + 1 },
+    (_, i) => el.getPointAtLength((total * i) / N).x
+  )
+
+  // net-leftward stroke (the T's stem): spread it linearly across its x-range
+  if (px[N] < px[0]) {
+    return { xs: [Math.min(...px), Math.max(...px)], ts: [0, 1] }
+  }
+
+  const xs: number[] = []
+  const ts: number[] = []
+  let max = px[0]
+  px.forEach((x, i) => {
+    max = Math.max(max, x)
+    xs.push(max + i * 1e-4) // keep strictly increasing
+    ts.push(i / N)
+  })
+  return { xs, ts }
+}
+
+function sample({ xs, ts }: Table, x: number) {
+  const last = xs.length - 1
+  if (x <= xs[0]) return 0
+  if (x >= xs[last]) return 1
+  let lo = 0
+  let hi = last
+  while (hi - lo > 1) {
+    const mid = (lo + hi) >> 1
+    if (xs[mid] <= x) lo = mid
+    else hi = mid
+  }
+  const k = (x - xs[lo]) / (xs[hi] - xs[lo])
+  return ts[lo] + k * (ts[hi] - ts[lo])
+}
+
+function Stroke({
+  d,
+  index,
+  x,
+  onRegister,
+}: {
+  d: string
+  index: number
+  x: MotionValue<number>
+  onRegister: (index: number, info: StrokeInfo) => void
+}) {
+  const ref = useRef<SVGPathElement>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    const table = buildTable(el)
+
+    onRegister(index, {
+      el,
+      table,
+      total: el.getTotalLength(),
+    })
+
+    const apply = (cx: number) => {
+      el.style.strokeDashoffset = String(1 - sample(table, cx))
+    }
+
+    apply(x.get())
+
+    const off = x.on("change", apply)
+
+    return () => {
+      off()
+    }
+  }, [x, index, onRegister])
+
+  return (
+    <path
+      ref={ref}
+      d={d}
+      pathLength={1}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={{ strokeDasharray: "1 2" }}
+    />
+  )
+}
+
 export function TusharSignature() {
+  const svgRef = useRef<SVGSVGElement>(null)
+  const lineRef = useRef<SVGLineElement>(null)
+  const registry: Registry = useRef([])
+  const hovering = useRef(false)
+  const onRegister = useCallback((index: number, info: StrokeInfo) => {
+    registry.current[index] = info
+  }, [])
+
+  // x: springy "pen" position that drives the drawing
+  // px / py: the raw cursor position, in viewBox units
+  const x = useSpring(FULL, { stiffness: 260, damping: 32, mass: 0.6 })
+  const px = useMotionValue(0)
+  const py = useMotionValue(0)
+
+  // Tether: from the end of the drawn part to the live cursor
+  useEffect(() => {
+    const line = lineRef.current
+    if (!line) return
+
+    const update = () => {
+      const strokes = registry.current
+      const cx = x.get()
+
+      // the stroke being drawn right now = the last one that has started
+      let active: StrokeInfo | undefined
+      let t = 0
+      for (let i = strokes.length - 1; i >= 0; i--) {
+        const s = strokes[i]
+        if (!s) continue
+        const v = sample(s.table, cx)
+        if (v > 0) {
+          active = s
+          t = v
+          break
+        }
+      }
+
+      if (!active || !hovering.current) {
+        line.style.opacity = "0"
+        return
+      }
+
+      const tip = active.el.getPointAtLength(active.total * t)
+      line.setAttribute("x1", String(tip.x))
+      line.setAttribute("y1", String(tip.y))
+      line.setAttribute("x2", String(px.get()))
+      line.setAttribute("y2", String(py.get()))
+      line.style.opacity = "1"
+    }
+
+    const offs = [
+      x.on("change", update),
+      px.on("change", update),
+      py.on("change", update),
+    ]
+    return () => offs.forEach((off) => off())
+  }, [x, px, py])
+
+  function moveTo(e: React.PointerEvent<SVGSVGElement>) {
+    const svg = svgRef.current
+    const ctm = svg?.getScreenCTM()
+    if (!svg || !ctm) return
+    // getScreenCTM accounts for the -rotate-6, so coordinates are in viewBox units
+    const pt = svg.createSVGPoint()
+    pt.x = e.clientX
+    pt.y = e.clientY
+    const p = pt.matrixTransform(ctm.inverse())
+    hovering.current = true
+    px.set(p.x)
+    py.set(p.y)
+    x.set(p.x)
+  }
+
+  function leave() {
+    hovering.current = false
+    if (lineRef.current) lineRef.current.style.opacity = "0"
+    x.set(FULL)
+  }
+
   return (
     <div className="flex h-60 items-center justify-center">
       <svg
-        className="-rotate-6 text-foreground/90"
+        ref={svgRef}
+        className="w-10/12 -rotate-6 cursor-crosshair p-15"
+        viewBox={`0 0 ${VIEW_W} 594`}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="5"
         xmlns="http://www.w3.org/2000/svg"
-        version="1.1"
-        width="300"
-        height="200"
-        viewBox="1.0399999618530273 15.960000038146973 68.44000244140625 27.15999984741211"
+        onPointerEnter={moveTo}
+        onPointerMove={moveTo}
+        onPointerLeave={leave}
       >
-        <path
-          d="M8.12 30.48L15.20 29.52Q14.84 30.04 14.10 30.28Q13.36 30.52 12.48 30.52L12.48 30.52Q11.48 30.88 9.56 31.22Q7.64 31.56 6.88 31.80L6.88 31.80L6.84 32.24L6.36 32.88Q6.36 33.20 6.10 33.56Q5.84 33.92 5.72 34.12L5.72 34.12Q5.12 35.12 4.52 35.84L4.52 35.84Q3.80 36.72 3.04 37.32L3.04 37.32Q2.84 37.52 2.84 37.96L2.84 37.96Q3.12 39.44 3.52 40.06Q3.92 40.68 4.52 40.96L4.52 40.96L6.88 40.92Q6.44 41.12 5.90 41.40Q5.36 41.68 4.88 41.88L4.88 41.88L4 42Q2.60 42 1.80 40.96L1.80 40.96L1.24 39.04Q1.12 38.88 1.08 38.76Q1.04 38.64 1.04 38.56L1.04 38.56Q1.56 38.04 1.74 36.76Q1.92 35.48 2.16 33.92L2.16 33.92L2.32 33.80L2.80 32.72L2.72 32.56L1.40 32.56L1.28 32.36Q1.88 31.20 3.20 31.20L3.20 31.20Q3.72 30.24 5.52 26.44L5.52 26.44Q6.20 25 6.88 23.72L6.88 23.72L9.04 22.72Q9.28 23.36 9.38 23.86Q9.48 24.36 9.48 25L9.48 25Q9.48 25.60 9.40 25.92L9.40 25.92Q9.40 26.68 9.08 27.60L9.08 27.60Q8.16 30.28 8.12 30.48L8.12 30.48ZM7.92 28.28L8.16 25.08L6.72 26.76L5.12 30.60Q5.20 30.80 5.36 30.76L5.36 30.76L6.88 30.36L7.32 29.88L7.92 28.28ZM5.24 33.88L6.16 32.20L4.48 32.44Q4 33.60 3.52 34.76L3.52 34.76Q3.52 34.88 3.38 35.44Q3.24 36 3.24 36.32L3.24 36.32L3.52 36.12L5.24 33.88ZM22.04 40.12L22.60 40.04Q22.48 40.32 22.48 40.48L22.48 40.48Q21.84 40.92 21.04 41.32L21.04 41.32Q20.60 41.52 19.40 42L19.40 42Q19.08 42.16 18.68 42.16L18.68 42.16Q17.76 42.16 17.16 41.28L17.16 41.28L16.76 39.04Q15.40 39.92 14.08 40.80L14.08 40.80Q13.28 41.12 12.78 41.30Q12.28 41.48 11.72 41.48L11.72 41.48Q11.20 41.48 10.84 41.28L10.84 41.28Q10.60 41.04 10.36 40.80L10.36 40.80L9.72 40.92L9.40 40.32L10.84 39.60L12.20 36.36Q12.48 35.88 12.54 35.68Q12.60 35.48 12.60 35.16L12.60 35.16Q13.36 33.88 14.44 33.40L14.44 33.40L14.76 33.44Q14.76 33.92 14.20 34.72Q13.64 35.52 13.64 36.08L13.64 36.08L12.40 38.72Q12.28 39.56 12.28 40L12.28 40Q12.28 40.16 12.36 40.48L12.36 40.48Q12.52 40.52 12.76 40.52L12.76 40.52Q13.32 40.52 14.20 40.04Q15.08 39.56 15.28 39.52L15.28 39.52Q15.88 39.20 16.68 38.40L16.68 38.40Q17.08 38 17.52 37.56L17.52 37.56Q17.68 37.16 18.02 36.58Q18.36 36 18.76 35.36L18.76 35.36L20.32 34.44Q20.40 34.64 20.32 35L20.32 35Q20.04 35.56 19.82 36.18Q19.60 36.80 19.40 37.56L19.40 37.56Q19.12 38 19.06 38.92Q19 39.84 18.92 40.12L18.92 40.12L19.40 40.96Q19.56 41.12 20 41.12L20 41.12Q20.52 41.04 21.06 40.76Q21.60 40.48 22.04 40.12L22.04 40.12ZM32.24 36.16L32.24 36.16Q31.72 36.68 30.44 37.28Q29.16 37.88 28.68 38.52L28.68 38.52Q28.56 39.48 28.52 39.78Q28.48 40.08 28.24 40.48L28.24 40.48Q28.12 40.84 27.64 41.04L27.64 41.04Q27.48 41.12 26.80 41.28L26.80 41.28Q26.44 41.76 26.32 41.84L26.32 41.84Q26.04 42.08 25.60 42.20L25.60 42.20Q25.24 42.36 24.80 42.36L24.80 42.36Q24.28 42.36 23.80 42.20Q23.32 42.04 22.68 41.68L22.68 41.68L22.56 39.88L23.44 38.56Q23.72 38.20 24.62 38.02Q25.52 37.84 26.68 37.64L26.68 37.64Q26.68 37.04 26.28 34.84L26.28 34.84Q26.08 33.76 26.08 33.04L26.08 33.04Q26.04 32.68 26.04 32.48L26.04 32.48Q26.04 31.44 26.40 30.46Q26.76 29.48 27.44 28.88L27.44 28.88L29.12 28.52Q29.68 28.76 30 29.52L30 29.52Q30.24 30.28 30.52 31.04L30.52 31.04Q30.60 31.60 30.68 32.16L30.68 32.16Q30.68 32.44 30.60 32.52L30.60 32.52L29.36 33.04L29.32 32.72Q29.32 31.92 29.02 31.28Q28.72 30.64 28.12 30.16L28.12 30.16Q27.92 30.24 27.72 30.48L27.72 30.48Q27.72 30.52 27.66 30.68Q27.60 30.84 27.60 31.32L27.60 31.32Q27.60 31.64 27.68 32.42Q27.76 33.20 27.76 33.28L27.76 33.28Q28.04 33.92 28.30 35.32Q28.56 36.72 28.68 37.12L28.68 37.12Q28.96 37.24 29.22 37.14Q29.48 37.04 29.76 36.92L29.76 36.92Q30.28 36.92 30.72 36.64L30.72 36.64Q31.44 36.16 31.52 36.12L31.52 36.12Q31.72 36.12 31.92 36.12Q32.12 36.12 32.24 36.16ZM26.80 38.88L26.80 38.88L24.20 39.28L23.40 39.52Q23.32 39.68 23.28 39.84L23.28 39.84Q23.36 40.08 23.84 40.30Q24.32 40.52 24.52 40.68Q24.72 40.84 25.12 40.92Q25.52 41 25.60 41L25.60 41L26.44 40.92Q26.72 40.64 26.74 40.04Q26.76 39.44 26.80 38.88ZM46.48 16.16L46.48 16.16Q46.08 17.96 45.68 19.72L45.68 19.72Q45.60 20.12 45.04 21.36L45.04 21.36Q44.88 21.76 44.48 22.60L44.48 22.60Q43.84 23.88 43.20 25.16L43.20 25.16Q42.64 26.56 41.68 27.92L41.68 27.92Q40.92 28.96 40.56 29.44L40.56 29.44L37.40 34.28L34.56 40.16L36.56 39L38.24 37.52L38.88 36.36L40.12 35.44Q40.28 35.56 40.32 35.76L40.32 35.76Q40.20 36.56 40.16 36.96L40.16 36.96Q40 38.16 40 38.92L40 38.92L40.12 40.16Q40.32 40.56 40.56 40.72L40.56 40.72Q41.12 41.08 41.64 41.08L41.64 41.08Q42.12 41.08 42.52 40.80L42.52 40.80Q43.60 40.32 44.68 39.88L44.68 39.88Q44.28 40.40 43.40 40.96L43.40 40.96Q42.20 41.72 41.88 42L41.88 42Q41.56 42.20 40.84 42.20L40.84 42.20Q40.16 42.20 39.74 42.14Q39.32 42.08 39.12 42L39.12 42Q38.64 41.40 38.46 40.54Q38.28 39.68 38.28 38.56L38.28 38.56Q37.84 38.76 37.24 39.18Q36.64 39.60 36.28 40L36.28 40Q36.08 40.12 35.72 40.40L35.72 40.40Q35.04 40.96 34.64 41.12L34.64 41.12Q34.32 41.16 33.68 41.54Q33.04 41.92 32.72 41.84L32.72 41.84L33.60 38.84L35.56 35.60Q35 35.72 34.52 36.10Q34.04 36.48 33.60 37.04L33.60 37.04Q33.64 36.96 33.56 36.84Q33.48 36.72 33.36 36.52L33.36 36.52Q34.80 35.20 35.12 34.92L35.12 34.92Q36.04 34.04 36.68 33.24L36.68 33.24Q37.56 31.92 38.50 30.46Q39.44 29 39.88 27.68L39.88 27.68L41.52 24.68L45.20 16.68L46.24 15.96Q46.36 15.96 46.48 16.16ZM45.20 18.84L45.20 18.84Q44.88 19.12 44.48 19.68L44.48 19.68Q44.24 20.56 43.28 22.60L43.28 22.60Q42.68 23.84 42.52 24.44L42.52 24.44Q41.68 25.76 41.56 25.96L41.56 25.96Q41.04 26.88 40.80 27.72L40.80 27.72Q41.52 27.32 42.60 25.08Q43.68 22.84 44.72 20.60L44.72 20.60Q45 20 45.06 19.78Q45.12 19.56 45.20 18.84ZM57.28 38.44L57.28 38.44Q57.12 38.60 56.64 38.92Q56.16 39.24 55.88 39.44L55.88 39.44Q55.60 39.52 53.92 40.24L53.92 40.24Q52.72 40.76 51.76 40.76L51.76 40.76Q51.60 40.76 51.12 40.68L51.12 40.68L50.88 40.36Q50.56 39.96 50.56 39.32L50.56 39.32Q50.60 38.72 50.60 38.48L50.60 38.48Q50.60 38.32 50.52 38.08L50.52 38.08Q49.60 38.92 49.16 39.32Q48.72 39.72 48.20 40.36L48.20 40.36Q47.48 40.88 46.76 41.44L46.76 41.44Q45.88 42.04 45.04 42.04L45.04 42.04L44.60 41.80Q44.28 41.20 44.28 40.40L44.28 40.40Q44.28 39.64 44.48 38.82Q44.68 38 44.88 37.20L44.88 37.20Q44.96 37.08 45.04 36.92L45.04 36.92Q45.48 36.08 45.92 35.24L45.92 35.24Q46.44 34.40 47.08 33.80L47.08 33.80Q47.24 33.20 47.80 32.60L47.80 32.60Q48.12 32.28 48.96 31.60L48.96 31.60Q49.68 31.20 50.40 30.92Q51.12 30.64 51.84 30.64L51.84 30.64Q52.16 30.64 52.32 30.68L52.32 30.68Q53.36 30.92 53.76 31.76L53.76 31.76Q54.16 32.28 54.16 33L54.16 33Q54.16 33.88 53.64 34.60L53.64 34.60L53.20 34.76Q52.96 35.04 52.56 35.80Q52.16 36.56 51.80 37.52L51.80 37.52L51.72 38.40Q51.72 39.12 51.92 39.44L51.92 39.44Q52.44 39.72 53.00 39.72L53.00 39.72Q53.72 39.72 55.18 39.10Q56.64 38.48 57.28 38.44ZM52.92 33.72L52.92 33.72Q52.92 33.12 52.28 32.32L52.28 32.32Q52.20 32.20 51.92 31.96L51.92 31.96Q51.48 31.68 50.96 31.68L50.96 31.68Q50.44 31.68 49.76 31.98Q49.08 32.28 48.76 32.44L48.76 32.44Q48.24 33.12 47.70 33.82Q47.16 34.52 46.84 35.28L46.84 35.28Q46.68 35.48 46.48 36.02Q46.28 36.56 46.12 36.68L46.12 36.68Q46.12 37.12 45.82 37.68Q45.52 38.24 45.52 38.60L45.52 38.60Q45.32 39.16 45.32 39.92L45.32 39.92Q45.32 40.60 45.48 41.04L45.48 41.04L46.80 40.88Q47.00 40.64 48.96 38.96L48.96 38.96Q50.36 37.72 50.88 36.68L50.88 36.68L51.36 35.72Q51.64 35.24 52.28 34.56Q52.92 33.88 52.92 33.72ZM69.48 39.28L69.48 39.28Q69.48 39.52 68.04 40.68L68.04 40.68Q67.56 41.04 66.56 41.84L66.56 41.84Q63.72 42.72 62.76 42.92Q61.80 43.12 60.64 43.12L60.64 43.12Q60.08 42.80 59.60 42.40L59.60 42.40Q58.96 41.88 58.72 41.44L58.72 41.44Q58.64 41.24 58.64 40.76L58.64 40.76Q58.64 40.12 59.08 38.92Q59.52 37.72 59.60 37.12L59.60 37.12Q59.84 37.08 59.92 36.78Q60.00 36.48 60.00 36.08L60.00 36.08L58.96 35.12Q58.48 36.36 57.36 37.56L57.36 37.56Q56.00 39 54.68 40.40L54.68 40.40L53.40 40.92L53.48 39.92Q55.00 38.80 55.24 38.28L55.24 38.28Q57.20 36.20 57.48 35.84L57.48 35.84Q58.60 34.36 58.60 32.80L58.60 32.80Q58.60 32.60 58.52 32.04L58.52 32.04Q58.72 31.80 59.36 31.28L59.36 31.28Q59.56 31.12 59.96 30.84L59.96 30.84L60.24 31.28Q60.16 31.52 60.08 31.56L60.08 31.56Q60.08 32.76 60.48 33.56Q60.88 34.36 61.68 35.12L61.68 35.12Q61.04 37.56 60.44 39.96L60.44 39.96Q60.44 40.32 60.48 40.44Q60.52 40.56 60.84 40.82Q61.16 41.08 61.32 41.28L61.32 41.28Q62.16 41.52 63.00 41.52L63.00 41.52Q64.04 41.52 65.10 41.24Q66.16 40.96 67.36 40.48L67.36 40.48Q67.40 40.28 68.38 39.66Q69.36 39.04 69.48 39.28Z"
-          fill="currentcolor"
-        ></path>
+        {STROKES.map((d, i) => (
+          <Stroke key={i} d={d} index={i} x={x} onRegister={onRegister} />
+        ))}
+        <line
+          ref={lineRef}
+          strokeLinecap="round"
+          style={{ opacity: 0, transition: "opacity 150ms" }}
+        />
       </svg>
     </div>
   )
