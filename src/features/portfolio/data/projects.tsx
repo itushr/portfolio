@@ -1,4 +1,4 @@
-import { ChanhDaiMark } from "@/components/chanhdai-mark"
+import { BrandMark } from "@/components/brand-mark"
 import {
   QuaricIcon,
   ReactWheelPickerIcon,

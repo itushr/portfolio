@@ -38,13 +38,13 @@ export const USER: User = {
 - I enjoy turning ideas into practical, polished products, from developer tools and communities to AI-powered applications. While MERN and applied AI are my main focus, I’m constantly experimenting with new technologies across machine learning, Web3, and whatever else looks interesting enough to build.
 - Currently, I’m focused on strengthening my fundamentals, shipping real projects, and becoming a better engineer by building things.
 `,
-  avatar: "https://avatars.githubusercontent.com/u/172966899?v=4",
-  avatarSketch: "https://avatars.githubusercontent.com/u/172966899?v=4",
+  avatar: "/avatar.png",
+  avatarSketch: "/avatar.png",
   avatarVariants: {
-    lightOff: "https://avatars.githubusercontent.com/u/172966899?v=4",
-    lightOn: "https://avatars.githubusercontent.com/u/172966899?v=4",
-    darkOff: "https://avatars.githubusercontent.com/u/172966899?v=4",
-    darkOn: "https://avatars.githubusercontent.com/u/172966899?v=4",
+    lightOff: "/avatar.png",
+    lightOn: "/avatar.png",
+    darkOff: "/avatar.png",
+    darkOn: "/avatar.png",
   },
   ogImage:
     "https://assets.chanhdai.com/images/screenshot-og-image-dark.png?t=1778602757",

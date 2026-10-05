@@ -3,9 +3,9 @@ import Link from "next/link"
 
 import { MAIN_NAV } from "@/config/site"
 import { Separator } from "@/components/ui/separator"
-import { ChanhDaiMark } from "@/components/chanhdai-mark"
+import { BrandMark } from "@/components/brand-mark"
 import { NavDesktop } from "@/components/nav-desktop"
-import { NavItemGitHub } from "@/components/nav-item-github"
+// import { NavItemGitHub } from "@/components/nav-item-github"
 import { ThemeToggle } from "@/components/theme-toggle"
 import blocks from "@/registry/__blocks__.json"
 import { BOOKMARKS } from "@/features/bookmark/data"
@@ -42,7 +42,7 @@ export function SiteHeader() {
       <div className="screen-line-top screen-line-bottom mx-auto flex h-(--header-height) items-center gap-2 border-x screen-line-bottom-border screen-line-top-border pr-2 pl-4 group-has-data-[slot=layout-wide]/layout:container after:z-1 sm:gap-4 md:max-w-3xl">
         <BrandContextMenu>
           <Link href="/" aria-label="Home">
-            <ChanhDaiMark className="h-6 shrink-0" />
+            <BrandMark className="h-15 shrink-0 pt-2" />
           </Link>
         </BrandContextMenu>
 
@@ -65,11 +65,11 @@ export function SiteHeader() {
             orientation="vertical"
             className="mx-2 max-sm:hidden data-vertical:h-5 data-vertical:self-center"
           />
-          <NavItemGitHub />
+          {/* <NavItemGitHub />
           <Separator
             orientation="vertical"
             className="mx-2 data-vertical:h-5 data-vertical:self-center"
-          />
+          /> */}
           <ThemeToggle />
         </div>
 
