@@ -15,6 +15,7 @@ import {
   DownloadIcon,
   FileTextIcon,
   GraduationCapIcon,
+  HomeIcon,
   LayersIcon,
   LineChartIcon,
   MonitorIcon,
@@ -92,7 +93,7 @@ const MENU_LINKS: CommandLinkItem[] = [
     title: "Home",
     href: "/",
     kind: "page",
-    icon: <BrandMark />,
+    icon: <HomeIcon />,
     shortcut: "GH",
   },
   {
@@ -747,7 +748,7 @@ function CommandMenuFooter({
       <div className="flex h-10" />
 
       <div className="absolute inset-x-0 bottom-0 flex h-10 items-center justify-between gap-2 rounded-b-2xl px-4 text-xs font-medium">
-        <BrandMark className="size-6 text-muted-foreground" />
+        <BrandMark className="h-8 text-muted-foreground" />
 
         <div className="flex items-center gap-2 max-sm:hidden">
           <span>{ENTER_ACTION_LABELS[selectedCommandKind ?? "page"]}</span>
