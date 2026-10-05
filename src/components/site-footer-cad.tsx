@@ -81,7 +81,9 @@ export function SiteFooterCad() {
               <time dateTime={build.date}>{build.date}</time>
             </Field>
 
-            <Field label="Registry">{registryStats.total} items</Field>
+            {/* <Field label="Registry">{registryStats.total} items</Field> */}
+
+            <Field label="Status">Live</Field>
 
             <Field label="Deployed on">
               <span className="font-sans" aria-hidden>
@@ -169,10 +171,9 @@ export function SiteFooterCad() {
                 count and gap lands these columns on the same grid lines as the
                 cells above, rather than dividing the padded width.
               */}
-              <ol className="-mx-4 grid grid-cols-2 gap-x-px gap-y-0.5 font-sans md:grid-cols-4">
+              {/* <ol className="-mx-4 grid grid-cols-2 gap-x-px gap-y-0.5 font-sans md:grid-cols-4">
                 {INSPIRED_BY.map((item, index) => (
                   <li className="flex gap-2 px-4" key={item.name}>
-                    {/* Hidden: the list element already conveys the position. */}
                     <span
                       className="font-mono text-muted-foreground/80"
                       aria-hidden
@@ -189,7 +190,38 @@ export function SiteFooterCad() {
                     </a>
                   </li>
                 ))}
-              </ol>
+              </ol> */}
+              <div className="flex justify-between">
+                <span className="flex gap-1">
+                  <span>chanhdai.com</span>
+                  <span>:</span>
+                  <span className="hidden lg:inline">
+                    a pixel-perfect dev portfolio and shadcn registry.
+                  </span>
+                </span>
+                <span className="flex gap-2">
+                  <span>
+                    <a
+                      className="link-underline"
+                      href="https://chanhdai.com"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      website
+                    </a>
+                  </span>
+                  <span>
+                    <a
+                      className="link-underline"
+                      href="https://github.com/ncdai/chanhdai.com"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      repository
+                    </a>
+                  </span>
+                </span>
+              </div>
             </Field>
           </dl>
         </div>
@@ -202,7 +234,7 @@ export function SiteFooterCad() {
             className="mr-auto text-muted-foreground transition-[color] hover:text-foreground"
             aria-label="Home"
           >
-            <BrandMark className="h-4" />
+            <BrandMark className="h-10" />
           </Link>
 
           <a
