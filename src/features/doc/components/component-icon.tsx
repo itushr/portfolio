@@ -31,7 +31,7 @@ import {
   ZapIcon,
 } from "lucide-react"
 
-import { ChanhDaiMark } from "@/components/chanhdai-mark"
+import { BrandMark } from "@/components/brand-mark"
 import {
   AppleIcon,
   ReactIcon,
@@ -146,7 +146,7 @@ const COMPONENT_ICONS: Record<string, React.ReactNode> = {
   "testimonial-2": <IconBlockquote />,
   "line-nav": <IconBaselineDensitySmall />,
   "share-menu": <ShareIcon />,
-  "spotlight-logo": <ChanhDaiMark />,
+  "spotlight-logo": <BrandMark />,
   timescale: (
     // Icon designed by @ncdai
     <svg

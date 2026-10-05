@@ -14,7 +14,7 @@ import { SOCIAL } from "@/features/portfolio/data/social-links"
 import packageJson from "../../package.json"
 // Precomputed by `pnpm registry:build`, so the count costs no registry import.
 import registryStats from "../../registry-stats.json"
-import { ChanhDaiMark } from "./chanhdai-mark"
+import { BrandMark } from "./brand-mark"
 import { FluidGradientText } from "./fluid-gradient-text"
 
 const INSPIRED_BY = [
@@ -202,7 +202,7 @@ export function SiteFooterCad() {
             className="mr-auto text-muted-foreground transition-[color] hover:text-foreground"
             aria-label="Home"
           >
-            <ChanhDaiMark className="h-4" />
+            <BrandMark className="h-4" />
           </Link>
 
           <a
